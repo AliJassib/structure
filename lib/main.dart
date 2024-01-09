@@ -30,8 +30,8 @@ void main() async {
   //   event.complete(event.notification);
   // });
 
-  var deviceLanguageCode = Get.deviceLocale!.languageCode;
-  var local = Locale(prefs.getString("languageCode") ?? deviceLanguageCode);
+  // var deviceLanguageCode = Get.deviceLocale!.languageCode;
+  // var local = Locale(prefs.getString("languageCode") ?? deviceLanguageCode);
 
   Get.updateLocale(Locale('ar'));
   if (prefs.getBool('positive') != null) {
