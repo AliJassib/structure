@@ -67,8 +67,10 @@ class DioHttp extends GetxController {
     } else if (e.response?.statusCode == 400) {
       handleBadRequest(e);
     } else {
-      Logger().d(e.response?.data);
       noti('Error'.tr, e.response!.data['message'].toString());
+
+      Logger().d(e.response?.statusCode);
+      Logger().d(e.response?.data);
     }
   }
 

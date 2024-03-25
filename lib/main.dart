@@ -34,6 +34,8 @@ void main() async {
   // var local = Locale(prefs.getString("languageCode") ?? deviceLanguageCode);
 
   Get.updateLocale(Locale('ar'));
+  prefs.setString('token',
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9zaWQiOiIzOWIxNDUwZS04YjUxLTQxMmUtYjcxNy05NmRkZmJiZDk0YjUiLCJ1bmlxdWVfbmFtZSI6IjM5YjE0NTBlLThiNTEtNDEyZS1iNzE3LTk2ZGRmYmJkOTRiNSIsInJvbGUiOiIxIiwibmJmIjoxNzAyMjgzMTk4LCJleHAiOjE3MzMzODcxOTgsImlhdCI6MTcwMjI4MzE5OCwiaXNzIjoiVGVzdERCVGVzdERCIiwiYXVkIjoiMSJ9.E2SOuNZCDyTJQOIJFAWrlidD2fr5hdPLy9ug0gxcjc0');
   if (prefs.getBool('positive') != null) {
     OneSignal.shared.disablePush(prefs.getBool('positive')! ? false : true);
   } else {

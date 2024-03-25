@@ -1,32 +1,33 @@
-import 'package:Trip/config/constant.dart';
+
+import 'package:flutter/material.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class PaginatedList<T> extends StatefulWidget {
-  final String? name;
   final List<T> data;
   final RefreshController refreshController;
   final T controller;
+  final T model;
   final double? height;
   final Widget child;
   final int? totalPage;
   final bool Function(bool)? changeState;
-  final dynamic Function(dynamic)? model;
 
-  const PaginatedList({
-    Key? key,
-    required this.data,
-    required this.refreshController,
-    required this.child,
-    required this.controller,
-    this.height,
-    this.totalPage,
-    this.changeState,
-    this.name,
-    this.model,
-  }) : super(key: key);
+  const PaginatedList(
+      {super.key,
+      required this.data,
+      required this.refreshController,
+      this.height,
+      required this.child,
+      required this.controller,
+      this.totalPage,
+      this.changeState,
+      required this.model});
 
   @override
   State<PaginatedList> createState() => _PaginatedListState();
 }
+
+int page = 1;
 
 class _PaginatedListState extends State<PaginatedList> {
   @override
@@ -37,51 +38,44 @@ class _PaginatedListState extends State<PaginatedList> {
         enablePullDown: true,
         enablePullUp: true,
         controller: widget.refreshController,
-        onRefresh: _onRefresh,
-        onLoading: _onLoading,
+        onRefresh: () {
+          widget.controller.pages.value = 1;
+          widget.controller.get(page: 1);
+          widget.refreshController.refreshCompleted();
+        },
+        onLoading: () async {
+          if (widget.totalPage != 0 &&
+              widget.controller.pages.value <= widget.totalPage!) {
+            widget.controller.pages.value++;
+
+            var x = await widget.controller
+                .getPagination(page: widget.controller.pages.value);
+
+            var newData = widget.model(x).data?.fingerprints ?? [];
+
+            widget.data.addAll(newData);
+
+            setState(() {
+              widget.data;
+            });
+
+            widget.refreshController.loadComplete();
+          } else {
+            widget.refreshController.loadNoData();
+            Future.delayed(Duration(seconds: 1), () {
+              widget.refreshController.loadComplete();
+            });
+          }
+          widget.changeState;
+        },
         child: widget.child,
       ),
     );
   }
 
-  void _onRefresh() {
-    widget.controller.pages.value = 0;
-    widget.controller.get(
-      skip: widget.controller.pages.value,
-    );
-    widget.refreshController.refreshCompleted();
-  }
-
-  Future<void> _onLoading() async {
-    if (widget.totalPage != 0 &&
-        widget.controller.pages.value <= widget.totalPage!) {
-      widget.controller.pages.value++;
-      Logger().d(widget.totalPage);
-
-      dynamic getData = await widget.controller.getPagination(
-        skip: widget.controller.pages.value,
-        tripNumber: widget.name,
-      );
-
-      dynamic newData = widget.model!(getData);
-
-      widget.data.addAll(newData);
-
-      setState(() {});
-
-      widget.refreshController.loadComplete();
-    } else {
-      widget.refreshController.loadNoData();
-      Future.delayed(Duration(seconds: 1), () {
-        widget.refreshController.loadComplete();
-      });
-    }
-
-    widget.changeState?.call(true);
-  }
-
   @override
   void dispose() {
+    page = 1;
     super.dispose();
   }
 }

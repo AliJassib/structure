@@ -1,3 +1,8 @@
+import 'package:Trip/config/const_wodget/PaginatedList.dart';
+import 'package:Trip/config/const_wodget/dropdown.dart';
+import 'package:Trip/config/constant.dart';
+import 'package:Trip/controller/data_controller.dart';
+import 'package:Trip/model/country_model.dart';
 import 'package:flutter/material.dart';
 
 class SplashPage extends StatefulWidget {
@@ -15,12 +20,29 @@ class _SplashPageState extends State<SplashPage> {
         title: const Text('SplashPage'),
         centerTitle: true,
       ),
-      body: const Center(
-        child: Text(
-          'SplashPage is working',
-          style: TextStyle(fontSize: 20),
-        ),
+      body: PaginatedList(
+        changeState: (p0) {
+          return true;
+        },
+        height: 500,
+        totalPage: 4,
+        model: CountryModel,
+        data: controller.countryModel.value.result?.data ?? [],
+        refreshController: refreshController,
+        controller: controller,
+        child: Text('data'),
       ),
     );
+  }
+
+  DataController controller = Get.find();
+  RefreshController refreshController = RefreshController();
+  @override
+  void initState() {
+    controller.get(
+      path: '/Country',
+      queryParameters: {},
+    );
+    super.initState();
   }
 }
