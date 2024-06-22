@@ -1,6 +1,5 @@
 import 'package:Trip/config/bindings/binding_controllers.dart';
 import 'package:Trip/config/constant.dart';
-import 'package:Trip/config/sizing/size_config.dart';
 import 'package:Trip/config/themes/theme_generator.dart';
 import 'package:Trip/l10n/locals.g.dart';
 import 'package:Trip/pages/splash/splash_page.dart';
