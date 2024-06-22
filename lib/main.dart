@@ -2,7 +2,7 @@ import 'package:Trip/config/bindings/binding_controllers.dart';
 import 'package:Trip/config/constant.dart';
 import 'package:Trip/config/sizing/size_config.dart';
 import 'package:Trip/config/themes/theme_generator.dart';
-import 'package:Trip/core/locals.g.dart';
+import 'package:Trip/l10n/locals.g.dart';
 import 'package:Trip/pages/splash/splash_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -73,7 +73,7 @@ class _MyAppState extends State<MyApp> {
     return LayoutBuilder(builder: (context, constraints) {
       return OrientationBuilder(builder: (context, orientation) {
         final theme = AppTheme();
-        SizeConfig().init(constraints, orientation);
+        // SizeConfig().init(constraints, orientation);
         return GetMaterialApp(
           debugShowCheckedModeBanner: false,
           initialBinding: BindingsController(),

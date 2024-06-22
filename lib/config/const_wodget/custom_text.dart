@@ -14,7 +14,7 @@ class CustomText extends StatelessWidget {
   final int maxLines;
   final TextAlign align;
 
-  CustomText({
+  const CustomText({super.key, 
     required this.text,
     this.textType = TextType.body,
     this.textStyle,

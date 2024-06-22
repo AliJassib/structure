@@ -1,9 +1,12 @@
 import 'dart:io';
 
 import 'package:Trip/config/constant.dart';
+import 'package:Trip/config/utils/dialog.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
-Future<dynamic> customBottomSheet(BuildContext context, {Widget? child, double? height}) {
+Future<dynamic> customBottomSheet(BuildContext context,
+    {Widget? child, double? height}) {
   return Get.bottomSheet(
     Container(
       width: context.width,
@@ -12,7 +15,9 @@ Future<dynamic> customBottomSheet(BuildContext context, {Widget? child, double? 
         minHeight: context.height * 0.2,
       ),
       decoration: BoxDecoration(
-        color: Get.isDarkMode ? context.theme.colorScheme.surface : context.theme.colorScheme.surface,
+        color: Get.isDarkMode
+            ? context.theme.colorScheme.surface
+            : context.theme.colorScheme.surface,
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(Insets.medium),
           topRight: Radius.circular(Insets.medium),
@@ -33,13 +38,11 @@ Future<dynamic> customBottomSheet(BuildContext context, {Widget? child, double? 
         ],
       ),
     ),
-    enterBottomSheetDuration: Duration(milliseconds: 400),
-    exitBottomSheetDuration: Duration(milliseconds: 400),
+    enterBottomSheetDuration: const Duration(milliseconds: 400),
+    exitBottomSheetDuration: const Duration(milliseconds: 400),
     isScrollControlled: true,
   );
 }
-
-
 
 Future<dynamic> customDialog(BuildContext context,
     {String? title,
@@ -60,6 +63,28 @@ Future<dynamic> customDialog(BuildContext context,
       buttonColor: buttonColor,
       cancelTextColor: cancelTextColor,
       onConfirm: onConfirm);
+}
+
+Future getDialog({
+  required BuildContext context,
+  required Widget child,
+}) {
+  return showAnimatedDialog(
+    context: context,
+    barrierDismissible: true,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        titlePadding: EdgeInsets.zero,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(Insets.medium),
+        ),
+        title: child,
+      );
+    },
+    animationType: DialogTransitionType.slideFromBottom,
+    curve: Curves.fastLinearToSlowEaseIn,
+    duration: const Duration(milliseconds: 700),
+  );
 }
 
 Future<bool> showExitPopup(context) async {
@@ -107,4 +132,40 @@ Future<bool> showExitPopup(context) async {
           ),
         );
       });
+}
+
+NumberFormat price() {
+  return NumberFormat.currency(
+      locale: 'ar', symbol: ' IQD'.tr, decimalDigits: 0);
+}
+
+AppBar customAppBar(BuildContext context, {String? title}) {
+  return AppBar(
+    backgroundColor: Colors.transparent,
+    title: Text(
+      title ?? 'ارسال شكوى'.tr,
+      style: context.theme.textTheme.titleSmall!.copyWith(
+        fontWeight: FontWeight.bold,
+      ),
+    ),
+    centerTitle: false,
+    leading: InkMe(
+      onTap: () {
+        Get.back();
+      },
+      child: Container(
+        width: Insets.exLarge,
+        height: Insets.exLarge,
+        margin: EdgeInsets.all(Insets.exSmall),
+        clipBehavior: Clip.hardEdge,
+        decoration: BoxDecoration(
+          color: Colors.white.withOpacity(0.7),
+          shape: BoxShape.circle,
+        ),
+        child: const Center(
+          child: Icon(CupertinoIcons.back, color: Colors.black),
+        ),
+      ),
+    ),
+  );
 }

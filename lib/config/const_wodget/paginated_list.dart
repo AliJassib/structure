@@ -1,16 +1,15 @@
-
-import 'package:flutter/material.dart';
-import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:Trip/config/constant.dart';
 
 class PaginatedList<T> extends StatefulWidget {
+  final String? id;
   final List<T> data;
   final RefreshController refreshController;
   final T controller;
-  final T model;
   final double? height;
   final Widget child;
   final int? totalPage;
-  final bool Function(bool)? changeState;
+  final dynamic getData;
+  final Rx<int> pages;
 
   const PaginatedList(
       {super.key,
@@ -20,14 +19,13 @@ class PaginatedList<T> extends StatefulWidget {
       required this.child,
       required this.controller,
       this.totalPage,
-      this.changeState,
-      required this.model});
+      this.getData,
+      required this.pages,
+      this.id});
 
   @override
   State<PaginatedList> createState() => _PaginatedListState();
 }
-
-int page = 1;
 
 class _PaginatedListState extends State<PaginatedList> {
   @override
@@ -39,43 +37,33 @@ class _PaginatedListState extends State<PaginatedList> {
         enablePullUp: true,
         controller: widget.refreshController,
         onRefresh: () {
-          widget.controller.pages.value = 1;
-          widget.controller.get(page: 1);
+          widget.pages.value = 1;
+          widget.getData(1);
           widget.refreshController.refreshCompleted();
         },
         onLoading: () async {
-          if (widget.totalPage != 0 &&
-              widget.controller.pages.value <= widget.totalPage!) {
-            widget.controller.pages.value++;
+          if (widget.totalPage != 0 && widget.pages.value < widget.totalPage!) {
+            widget.pages.value++;
+            await widget.getData(widget.pages.value);
 
-            var x = await widget.controller
-                .getPagination(page: widget.controller.pages.value);
+            // var newData = widget.model(x) ?? [];
+            // widget.data.addAll(newData);
 
-            var newData = widget.model(x).data?.fingerprints ?? [];
-
-            widget.data.addAll(newData);
-
-            setState(() {
-              widget.data;
-            });
+            // setState(() {
+            //   widget.data;
+            // });
 
             widget.refreshController.loadComplete();
           } else {
             widget.refreshController.loadNoData();
-            Future.delayed(Duration(seconds: 1), () {
+            Future.delayed(const Duration(seconds: 1), () {
               widget.refreshController.loadComplete();
             });
           }
-          widget.changeState;
+          // widget.changeState;
         },
         child: widget.child,
       ),
     );
-  }
-
-  @override
-  void dispose() {
-    page = 1;
-    super.dispose();
   }
 }

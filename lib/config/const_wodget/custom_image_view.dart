@@ -49,14 +49,14 @@ class _ImagesState extends State<Images> {
             ? Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(
+                  const Icon(
                     Icons.error,
                     color: Colors.red,
                     size: 10,
                   ),
                   Text(
                     'Error'.tr,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontWeight: FontWeight.bold,
                       color: Colors.red,
                       fontSize: 8,
@@ -68,7 +68,7 @@ class _ImagesState extends State<Images> {
             : Center(
                 child: Text(
                   widget.img![0],
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontWeight: FontWeight.bold,
                     color: Colors.red,
                     fontSize: 8,

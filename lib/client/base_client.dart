@@ -17,7 +17,7 @@ class BaseClient {
       return response.data;
     } catch (e) {
       Logger().e("Error in GET request: $e");
-      return null;
+      return false;
     }
   }
 
@@ -32,7 +32,7 @@ class BaseClient {
       return Tuple2(true, response.data);
     } catch (e) {
       Logger().e("Error in POST request: $e");
-      return Tuple2(false, null);
+      return const Tuple2(false, null);
     }
   }
 
@@ -42,12 +42,22 @@ class BaseClient {
     FormData? data,
   }) async {
     try {
-      Response<dynamic> response = await dioHttp.dio
-          .post(api, queryParameters: queryParameters, data: data);
+      Response<dynamic> response = await dioHttp.dio.post(
+        api,
+        queryParameters: queryParameters,
+        data: data,
+        options: Options(
+          // contentType: "multipart/form-data",
+
+          receiveTimeout: const Duration(days: 21),
+          sendTimeout: const Duration(days: 21),
+        ),
+      );
       return Tuple2(true, response.data);
     } catch (e) {
-      Logger().e("Error in POST (FormData) request: $e");
-      return Tuple2(false, null);
+      Logger().e("Error in POST (FormData) request:");
+      Logger().e(e);
+      return const Tuple2(false, null);
     }
   }
 

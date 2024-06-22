@@ -39,9 +39,10 @@ class _InkMeState extends State<InkMe> {
               child: InkWell(
                 onLongPress: widget.onLongPress,
                 borderRadius:
-                    widget.radius ?? BorderRadius.circular(Insets.small),
+                    widget.radius ?? BorderRadius.circular(BorderSize.large),
                 overlayColor: widget.overlayColor ??
-                    MaterialStatePropertyAll(primary(context).withOpacity(0.1)),
+                    MaterialStatePropertyAll(
+                        context.theme.colorScheme.primary.withOpacity(0.1)),
                 onTap: widget.onTap,
               ),
             ),

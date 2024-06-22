@@ -1,98 +1,115 @@
 import 'package:Trip/config/constant.dart';
-import 'package:Trip/controller/data_controller.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_device_type/flutter_device_type.dart';
 
-class CustomDropDown<T> extends StatefulWidget {
+class CustomDropDown extends StatelessWidget {
   const CustomDropDown({
     super.key,
     required this.title,
     this.onChanged,
-    this.color,
+    this.list,
+    this.data,
     this.enabled,
-    this.path,
-    this.takeFrom,
-    this.valueFrom,
-    this.queryParameters,
+    this.isSearch,
   });
 
-  final Color? color;
-  final String? path;
-  final T? takeFrom;
-  final String? valueFrom;
+  final List<String>? list;
+  final List<Map<String, dynamic>>? data;
   final String title;
-  final Map<String, dynamic>? queryParameters;
-  final void Function(T?)? onChanged;
+  final bool? isSearch;
+  final void Function(Object?)? onChanged;
   final String? enabled;
 
   @override
-  State<CustomDropDown> createState() => _CustomDropDownState();
-}
-
-class _CustomDropDownState extends State<CustomDropDown> {
-  @override
   Widget build(BuildContext context) {
-    return Container(
-      width: context.width,
-      padding: !Device.get().isPhone
-          ? EdgeInsets.all(Insets.exSmall)
-          : EdgeInsets.all(Insets.small),
-      decoration: BoxDecoration(
-        color: Get.isDarkMode
-            ? Theme.of(context).colorScheme.secondary.withOpacity(0.1)
-            : widget.color ??
-                Theme.of(context).colorScheme.outline.withOpacity(0.05),
-        borderRadius: BorderRadius.circular(Insets.small),
-      ),
-      child: DropdownButton<Object>(
-        // items: data != null
-        //     ? data!.map((Map<String, dynamic> value) {
-        //         return DropdownMenuItem(
-        //           value: value,
-        //           enabled: enabled != value['name'],
-        //           child: Text(
-        //             value['name'],
-        //           ),
-        //         );
-        //       }).toList()
-        //     : list!.map((String value) {
-        //         return DropdownMenuItem(
-        //           value: value,
-        //           child: Text(value),
-        //         );
-        //       }).toList(),
-        items: dataController.countryModel.value.result?.data
-            ?.map((e) => DropdownMenuItem(
-                  value: e,
-                  child: Text(e.name!),
-                ))
-            .toList(),
-        isDense: false,
-        isExpanded: true,
-        icon: Icon(
-          Icons.keyboard_arrow_down,
-          color: Theme.of(context).colorScheme.outline,
+    return DropdownMenu(
+      // enableFilter: true,
+      enableSearch: isSearch == null ? true : false,
+      onSelected: (value) {
+        onChanged!(value);
+        FocusScope.of(context).unfocus();
+      },
+      menuHeight: context.height * 0.3,
+      menuStyle: MenuStyle(
+        shadowColor: MaterialStateProperty.all(Colors.black),
+        alignment: Alignment.bottomRight,
+        surfaceTintColor: MaterialStateProperty.all(Colors.black),
+        backgroundColor:
+            MaterialStateProperty.all(context.theme.colorScheme.surface),
+        elevation: MaterialStateProperty.all(2),
+        shape: MaterialStateProperty.all(
+          RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(Insets.medium),
+          ),
         ),
-        borderRadius: BorderRadius.circular(Insets.small),
-        style: context.textTheme.bodyMedium!.copyWith(
-          color: Theme.of(context).colorScheme.outline,
-        ),
-        value: null,
-        hint: Text(widget.title),
-        elevation: 1,
-        underline: Container(),
-        onChanged: widget.onChanged,
       ),
-    );
-  }
 
-  DataController dataController = Get.find();
-  @override
-  void initState() {
-    dataController.get(
-      path: widget.path ?? '',
-      queryParameters: widget.queryParameters ?? {},
+      expandedInsets: const EdgeInsets.symmetric(
+        horizontal: 0,
+        vertical: 0,
+      ),
+      inputDecorationTheme: InputDecorationTheme(
+        fillColor: Theme.of(context).colorScheme.surface,
+        filled: true,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(Insets.large),
+          borderSide: BorderSide(
+            color: Theme.of(context).colorScheme.outline.withOpacity(0.2),
+            width: 1,
+          ),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(Insets.large),
+          borderSide: BorderSide(
+            color: Theme.of(context).colorScheme.outline.withOpacity(0.2),
+            width: 1,
+          ),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(Insets.large),
+          borderSide: BorderSide(
+            color: Theme.of(context).colorScheme.outline.withOpacity(0.2),
+            width: 1,
+          ),
+        ),
+        contentPadding: EdgeInsets.symmetric(
+          horizontal: Insets.medium,
+          vertical: Insets.small,
+        ),
+        hintStyle: context.textTheme.bodyMedium!.copyWith(
+          color: Theme.of(context).colorScheme.outline,
+        ),
+      ),
+      hintText: title,
+      controller: TextEditingController(),
+      initialSelection: title,
+      requestFocusOnTap: true,
+
+      // searchCallback: (entries, query) {
+      //   if (query.isEmpty) {
+      //     return null;
+      //   }
+      //   final int index = entries.indexWhere((entry) => entry.label == query);
+
+      //   return index != -1 ? index : null;
+      // },
+      dropdownMenuEntries: data != null
+          ? data!.map((Map<String, dynamic> value) {
+              return DropdownMenuEntry(
+                value: value,
+                label: value['name'],
+                enabled: enabled != value['name'],
+                labelWidget: Text(
+                  value['name'],
+                ),
+              );
+            }).toList()
+          : list!.map((String value) {
+              return DropdownMenuEntry(
+                value: value,
+                label: value,
+                labelWidget: Text(value),
+              );
+            }).toList(),
     );
-    super.initState();
   }
 }

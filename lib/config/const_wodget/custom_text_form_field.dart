@@ -1,5 +1,4 @@
 import 'package:Trip/config/constant.dart';
-import 'package:Trip/config/sizing/size_config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart' as intl;
@@ -65,7 +64,7 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
 
   @override
   Widget build(BuildContext context) {
-    String localCode = Get.locale!.languageCode;
+    // String localCode = Get.locale!.languageCode;
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -86,9 +85,11 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
                 ),
         if (widget.isLabelVisible)
           SizedBox(
-            height: 1 * SizeConfig.heightMultiplier!,
+            height: Insets.small,
           ),
         TextFormField(
+          autocorrect: false,
+          textInputAction: TextInputAction.done,
           onEditingComplete: widget.onEditComplete,
           readOnly: widget.readOnly ?? false,
           textAlign: widget.textAlign ?? TextAlign.start,
@@ -115,40 +116,36 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
           decoration: InputDecoration(
             errorMaxLines: 2,
             hintText: widget.hint!.tr,
-            hintStyle: TextStyle(
-              fontSize: 12,
-              color: Colors.grey,
-            ),
+            hintStyle: context.theme.textTheme.titleMedium!
+                .copyWith(color: context.theme.colorScheme.outline),
             suffixText: widget.suffixText,
-            suffixStyle: TextStyle(
+            suffixStyle: const TextStyle(
               fontSize: 12,
               color: Colors.red,
             ),
             filled: true,
             fillColor: Get.isDarkMode
-                ? context.theme.colorScheme.secondary.withOpacity(0.1)
-                : Theme.of(context)
-                    .colorScheme
-                    .outline
-                    .withOpacity(Get.isDarkMode ? 0.2 : 0.2),
+                ? context.theme.colorScheme.secondaryContainer.withOpacity(0.1)
+                : Theme.of(context).colorScheme.surface.withOpacity(1),
+            focusColor: context.theme.colorScheme.error,
             focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: BorderRadius.circular(25),
               borderSide: BorderSide(
-                width: 0,
-                color: Colors.transparent,
+                width: 1,
+                color: context.theme.colorScheme.outline.withOpacity(0.2),
                 style: BorderStyle.solid,
               ),
             ),
             enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: BorderRadius.circular(25),
               borderSide: BorderSide(
-                width: 0,
-                color: Colors.transparent,
+                width: 1,
+                color: context.theme.colorScheme.outline.withOpacity(0.2),
                 style: BorderStyle.solid,
               ),
             ),
             focusedErrorBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: BorderRadius.circular(25),
               borderSide: BorderSide(
                 width: 1,
                 color: Colors.red.shade200,
@@ -156,7 +153,7 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
               ),
             ),
             errorBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: BorderRadius.circular(25),
               borderSide: BorderSide(
                 width: 1,
                 color: Colors.red.shade200,
@@ -167,26 +164,18 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
             prefixIcon: widget.prefixIcon != null
                 ? Padding(
                     padding: EdgeInsets.symmetric(
-                        vertical: 1.25 * SizeConfig.heightMultiplier!,
-                        horizontal: 2 * SizeConfig.widthMultiplier!),
+                        vertical: Insets.small, horizontal: Insets.small),
                     child: Container(
-                      margin: EdgeInsets.only(
-                          right: 1 * SizeConfig.widthMultiplier!,
-                          left: 1 * SizeConfig.widthMultiplier!),
+                      // margin: EdgeInsets.only(
+                      //     right: Insets.exSmall, left: Insets.exSmall),
                       decoration: const BoxDecoration(),
-                      child: Padding(
-                        padding: localCode == "ar"
-                            ? EdgeInsets.only(
-                                left: 0.75 * SizeConfig.widthMultiplier!)
-                            : EdgeInsets.only(
-                                right: 1.75 * SizeConfig.widthMultiplier!),
-                        child: widget.prefixIcon,
-                      ),
+                      child: widget.prefixIcon,
                     ),
                   )
                 : null,
           ),
         ),
+        Gap(widget.bottomSpace),
       ],
     );
   }

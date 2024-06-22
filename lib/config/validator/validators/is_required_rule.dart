@@ -2,7 +2,7 @@ import '../validator_rule.dart';
 
 class IsRequiredRule extends ValidatorRule {
   @override
-  IsRequiredRule([String? errorMessage]) : super(errorMessage);
+  IsRequiredRule([super.errorMessage]);
 
   @override
   String? isValid(String? value) {

@@ -1,3 +1,4 @@
+
 import 'package:Trip/config/constant.dart';
 import 'package:flutter/material.dart';
 
@@ -25,15 +26,14 @@ class CustomLoadingText extends StatelessWidget {
             width: 20,
             height: 20,
             child: CircularProgressIndicator(
-              color:
-                  buttonColor == Colors.white ? primary(context) : Colors.white,
+              color: context.theme.colorScheme.primary,
               strokeWidth: 3,
             ),
           ),
-          SizedBox(width: 10),
+          const SizedBox(width: 10),
           Text('Loading'.tr,
               style: context.textTheme.bodyMedium!
-                  .copyWith(color: Theme.of(context).colorScheme.surface)),
+                  .copyWith(color: Theme.of(context).colorScheme.primary)),
         ],
       ),
     );

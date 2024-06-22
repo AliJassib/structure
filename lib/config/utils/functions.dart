@@ -1,54 +1,83 @@
 import 'dart:math';
-
-import 'package:Trip/config/interceptor/dio_interceptor.dart';
+import 'package:Trip/main.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:tuple/tuple.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../constant.dart';
 
-Future<T> fetchData<T>(
-  String endpoint,
-  Map<String, dynamic>? queryParameters,
-  T Function(Map<String, dynamic>) fromJson,
-) async {
-  DioHttp dioHttp = Get.find();
-  try {
-    final response =
-        await dioHttp.dio.get(endpoint, queryParameters: queryParameters);
-    return fromJson(response.data);
-  } catch (e) {
-    Logger(level: Level.verbose).d(e.toString());
-    throw e;
+String makeDate(DateTime? date) {
+  return DateFormat('yyyy-MM-dd').format(date ?? DateTime.now());
+}
+
+String makeTime(DateTime? date) {
+  return DateFormat('h:m a').format(date ?? DateTime.now());
+}
+
+String getStringOrDefault(String? inputString, [String defaultString = '-']) {
+  if (inputString == null || inputString.isEmpty) {
+    return defaultString;
+  } else {
+    return inputString;
   }
 }
 
-// bool checkApi(int status, dynamic response) {
-//   Logger().d(response);
-//   Logger().d(status);
+String formatCurrency(double amount) {
+  final NumberFormat formatter = NumberFormat.decimalPattern('ar_IQ');
+  return formatter.format(amount) + " IQ".tr;
+}
 
-//   switch (status) {
-//     case 401:
-//       noti('Error'.tr, 'We Can\'t Found Your Account'.tr);
-//       prefs.clear();
-//       Get.offAll(() => const SplashPage());
-//       break;
-//     case 403:
-//       noti('Error'.tr, 'You do not have permission to access this page'.tr);
-//       break;
-//     case 500:
-//       noti('Error'.tr, 'Server Error'.tr);
-//       break;
-//     default:
-//       if (response is Map && response.containsKey('message')) {
-//         noti('Error'.tr, response['message']);
-//         break;
-//       } else {
-//         noti('Error'.tr, 'Server Error'.tr);
-//         break;
-//       }
-//   }
+Tuple3<String, Color, String> getStatus(int? status) {
+  switch (status) {
+    case 0:
+      return Tuple3('مفتوح'.tr, Colors.blue, Assets.assetsIconsHourglassHigh);
+    case 1:
+      return Tuple3('معلق'.tr, Colors.orange, Assets.assetsIconsHourglassHigh);
+    case 2:
+      return Tuple3('تم الحل'.tr, Colors.green, Assets.assetsIconsChecks);
+    case 3:
+      return Tuple3('مغلق'.tr, Colors.red, Assets.assetsIconsX);
+    default:
+      return Tuple3('مفتوح'.tr, Colors.blue, Assets.assetsIconsHourglassHigh);
+  }
+}
 
-//   return false;
-// }
+Tuple3<String, Color, String> getStatusTask(int? status) {
+  switch (status) {
+    case 0:
+      return Tuple3(
+          'pending'.tr, Colors.orange, Assets.assetsIconsHourglassHigh);
+    case 1:
+      return Tuple3('Completed'.tr, Colors.blue, Assets.assetsIconsChecks);
+
+    case 2:
+      return Tuple3('Problem'.tr, Colors.red, Assets.assetsIconsX);
+    case 3:
+      return Tuple3('exceeded'.tr, Colors.red, Assets.assetsIconsX);
+    default:
+      return Tuple3(
+          'pending'.tr, Colors.orange, Assets.assetsIconsHourglassHigh);
+  }
+}
+
+Future<void> launchUrls(Uri url) async {
+  if (await canLaunchUrl(url)) {
+    await launchUrl(url);
+  } else {
+    throw 'Could not launch $url';
+  }
+}
+
+void changeTheme(bool isDark) {
+  if (isDark == false) {
+    prefs.setBool('darkTheme', false);
+    Get.changeThemeMode(ThemeMode.light);
+  } else {
+    prefs.setBool('darkTheme', true);
+    Get.changeThemeMode(ThemeMode.dark);
+  }
+}
 
 int delayValue(int index, int perPage, int? timeOfIndex,
     {int? maxDelay = 1000}) {
@@ -74,7 +103,7 @@ SnackbarController noti(title, body, {Function(GetSnackBar)? onTap}) {
   SnackbarController x = Get.snackbar(
     title,
     body,
-    margin: EdgeInsets.symmetric(horizontal: 30, vertical: 30),
+    margin: const EdgeInsets.symmetric(horizontal: 30, vertical: 30),
     colorText: Theme.of(Get.context!).colorScheme.onBackground,
     icon: Icon(
       Icons.notifications,
@@ -86,41 +115,4 @@ SnackbarController noti(title, body, {Function(GetSnackBar)? onTap}) {
     onTap: onTap,
   );
   return x;
-}
-
-List<String> generateNumberList(int number) {
-  List<String> numberList = [];
-
-  for (int i = 1; i <= number; i++) {
-    numberList.add(i.toString());
-  }
-
-  return numberList;
-}
-
-width(context) {
-  return MediaQuery.of(context).size.width;
-}
-
-height(context) {
-  return MediaQuery.of(context).size.height;
-}
-
-primary(context) {
-  return Theme.of(context).primaryColor;
-}
-
-checkDate(String dateTimes) {
-  var dateStr = dateTimes;
-  var dateParts = dateStr.split('/');
-
-  var year = int.parse(dateParts[0]);
-  var month = int.parse(dateParts[1]);
-  var day = int.parse(dateParts[2]);
-
-  if (day <= DateTime(year, month + 1).subtract(const Duration(days: 1)).day) {
-    Logger().d('Valid date');
-  } else {
-    Logger().d('Invalid date');
-  }
 }
